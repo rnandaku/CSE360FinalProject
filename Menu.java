@@ -22,13 +22,12 @@ public class Menu extends JFrame implements ActionListener {
     boolean rosterLoaded = false; 
     boolean plotReady = false;
     private String saveLocation;
-    private ArrayList<ArrayList> rosterList;
+    private ArrayList<ArrayList<String>> rosterList = new ArrayList<>();
     private ArrayList<String> header = new ArrayList<>(Arrays.asList("ID", "First Name", "Last Name", "Program",
             "Level", "ASURITE"));
 
     //Creates Menu Object that contains initial GUI elements
     public Menu(){
-
         //Set up Frame/Window
         frame = new JFrame("CSE360 Final Project");
         frame.setVisible(true);
@@ -70,6 +69,11 @@ public class Menu extends JFrame implements ActionListener {
 
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+    }
+
     //Class containing our actionPerformed method. This will determine what to do when
     //a user clicks on anything in the GUI
     private class menuSelect implements ActionListener{
@@ -89,7 +93,7 @@ public class Menu extends JFrame implements ActionListener {
             if(event.getSource() == rosterMenu){
 
                 Roster roster = new Roster();
-                rosterList = roster.loadRoster(rosterList);
+                rosterList = roster.loadRoster();
                 saveLocation = roster.getSavePath().toString();
                 aPanel = table.getFullRoster(rosterList, header);
                 frame.add(aPanel);
@@ -136,7 +140,7 @@ public class Menu extends JFrame implements ActionListener {
                 //if a roster has been loaded in, allow save function
                 if(rosterLoaded){
                     Save save = new Save();
-                    save.saveFile(saveLocation,rosterList, header); 
+                    save.saveFile(rosterList, header);
                 }else{
                     JOptionPane.showMessageDialog(frame, "Nothing to save yet. Try loading a roster.");
                 }
