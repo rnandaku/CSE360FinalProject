@@ -14,14 +14,14 @@ public class Plot extends JFrame{
     /**
      * Function to plot graph using JFreeChart
      */
-    public Component plotGraph(ArrayList<ArrayList> roster, ArrayList<String> header) {
+    public Component plotGraph(ArrayList<ArrayList<String>> roster, ArrayList<String> header) {
 
         XYSeriesCollection collection = new XYSeriesCollection();
         for (int i = 6; i < roster.get(0).size(); i++) {
             XYSeries series = new XYSeries(header.get(i));
             ArrayList<Integer> dateColumn = new ArrayList<>();
             for (int j = 0; j < roster.size(); j++)
-                dateColumn.add((int) roster.get(j).get(i));
+                dateColumn.add(Integer.parseInt(String.valueOf(roster.get(j).get(i))));
             for (int j = 0; j < dateColumn.size(); j++)
                 series.add((int) dateColumn.get(j), Collections.frequency(dateColumn, dateColumn.get(j)));
             collection.addSeries(series);
