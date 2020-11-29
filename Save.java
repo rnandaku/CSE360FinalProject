@@ -21,33 +21,46 @@ public class Save{
     /**
      * Function to save to a specific location
      *
-     * @param location
+     *
      */
 
     //saves in same path as roster
     // HELP HERE: There's a question mark right before the first entry - Is it a charset issue?
-    public void saveFile(String location, ArrayList<ArrayList> roster, ArrayList<String> header) {
-        ArrayList<ArrayList> finalSaveFile = new ArrayList<ArrayList>((ArrayList) roster.clone());
-        finalSaveFile.add(0, header);
-        try {
-            // Try changing the Charsets so it outputs everything properly?  I've tried most of the charsets to no avail
-            FileWriter csvWriter = new FileWriter(location + "\\saveRoster.csv", StandardCharsets.US_ASCII);
+    public void saveFile(ArrayList<ArrayList<String>> roster, ArrayList<String> header) {
+        String location = "";
+        JFileChooser c = new JFileChooser();
+        //JFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        c.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        // Demonstrate "Save" dialog:
+        int rVal = c.showSaveDialog(null);
+        if (rVal == JFileChooser.APPROVE_OPTION) {
+            location = c.getSelectedFile().toString();
 
-            for (List<String> rowData : finalSaveFile) {
-                String row = "";
-                for (Object colData : rowData) {
-                    row += String.valueOf(colData);
-                    row += ",";
+            ArrayList<ArrayList<String>> finalSaveFile = new ArrayList<ArrayList<String>>((ArrayList) roster.clone());
+            finalSaveFile.add(0, header);
+            try {
+                // Try changing the Charsets so it outputs everything properly?  I've tried most of the charsets to no avail
+                FileWriter csvWriter = new FileWriter(location + "\\saveRoster.csv", StandardCharsets.US_ASCII);
+
+                for (List<String> rowData : finalSaveFile) {
+                    String row = "";
+                    for (Object colData : rowData) {
+                        row += String.valueOf(colData);
+                        row += ",";
+                    }
+                    //System.out.println(row + "\n");
+                    csvWriter.append(row);
+                    csvWriter.append("\n");
                 }
-                //System.out.println(row + "\n");
-                csvWriter.append(row);
-                csvWriter.append("\n");
+                csvWriter.flush();
+                csvWriter.close();
+                JOptionPane.showMessageDialog(null, "File has been saved at: " + location + "/saveRoster.csv");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            csvWriter.flush();
-            csvWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            //System.out.println(location + "\t " +c.getSelectedFile().toString());
         }
+
     }
 
 
