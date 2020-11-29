@@ -8,7 +8,8 @@ public class Roster extends JPanel{
 
     private StringBuilder location;
 
-    public ArrayList<ArrayList> loadRoster(ArrayList<ArrayList> roster) {
+    public ArrayList<ArrayList<String>> loadRoster() {
+        ArrayList<ArrayList<String>> roster = null;
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(".csv", "csv");
         fileChooser.setFileFilter(filter);
@@ -21,7 +22,6 @@ public class Roster extends JPanel{
             location = new StringBuilder();
             location.append(selectedFile.getAbsolutePath());
         }
-
         return roster;
 
     }
@@ -59,6 +59,10 @@ public class Roster extends JPanel{
                 inner.clear();
             }
             br.close();
+
+            String firstElementName = outer.get(0).get(0).replaceAll("[^a-zA-Z0-9]", "");
+            String secondElementName = outer.get(0).get(1).replaceAll("[^a-zA-Z0-9]", "");
+            outer.set(0, new ArrayList<>(Arrays.asList(firstElementName, outer.get(0).get(1), outer.get(0).get(2), outer.get(0).get(3), outer.get(0).get(4), outer.get(0).get(5))));
             return outer;
         } catch (IOException ioe) {
             ioe.printStackTrace();
