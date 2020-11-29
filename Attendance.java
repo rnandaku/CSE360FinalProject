@@ -2,6 +2,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.jdatepicker.impl.*;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -9,7 +11,7 @@ import org.jdatepicker.impl.JDatePickerImpl;
 public class Attendance extends JPanel{
 
     private ArrayList<String> copy;
-    private ArrayList<ArrayList> notOnRoster;
+    private ArrayList<ArrayList<String>> notOnRoster;
     private int attendeeCount = 0;
     private StringBuilder aMessage;
 
@@ -28,6 +30,7 @@ public class Attendance extends JPanel{
             File file = new File(csvFile);
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
+
             String line = "";
             String[] tempArr;
             while ((line = br.readLine()) != null) {
@@ -39,6 +42,12 @@ public class Attendance extends JPanel{
                 inner.clear();
             }
             br.close();
+            //System.out.println(outer.toString());
+            //System.out.println("Outer: " + outer.get(0));
+            //outer.add(0, String.valueOf(outer.get(0).get(0)));
+            String firstElementName = outer.get(0).get(0).replaceAll("[^a-zA-Z0-9]", "");
+            String secondElementName = outer.get(0).get(1).replaceAll("[^a-zA-Z0-9]", "");
+            outer.set(0, new ArrayList<>(Arrays.asList(firstElementName, secondElementName)));
             return outer;
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -49,7 +58,7 @@ public class Attendance extends JPanel{
     /**
      * Function to load in attendance CSV
      */
-    public ArrayList<ArrayList> loadAttendance(ArrayList<ArrayList> roster, ArrayList<String> header) {
+    public ArrayList<ArrayList<String>> loadAttendance(ArrayList<ArrayList<String>> roster, ArrayList<String> header) {
 
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(".csv", "csv");
@@ -90,10 +99,10 @@ public class Attendance extends JPanel{
      * @param file
      * @return
      */
-    public ArrayList mergeDuplicatesAttendance(File file, ArrayList<ArrayList> roster) {
-        ArrayList<ArrayList> attendance = read(file.getAbsolutePath());
+    public ArrayList mergeDuplicatesAttendance(File file, ArrayList<ArrayList<String>> roster) {
+        ArrayList<ArrayList<String>> attendance = read(file.getAbsolutePath());
         ArrayList<Object> inner = new ArrayList<>();
-        ArrayList<ArrayList> finalList = new ArrayList<>();
+        ArrayList<ArrayList<String>> finalList = new ArrayList<>();
         attendeeCount = 0;
 
         for (int i = 0; i < roster.size(); i++) {
@@ -118,7 +127,7 @@ public class Attendance extends JPanel{
         }
         //System.out.println(finalList); //[[rnandaku, 40], [weiurh, 0], [johnsmith, 40]]
 
-        notOnRoster = new ArrayList<ArrayList>();
+        notOnRoster = new ArrayList<ArrayList<String>>();
         //COMPARE FINAL LIST WITH ATTENDANCE TO SEE WHICH ATTENDEES WERENT ON THE ROSTER 
         for(int k = 0; k < attendance.size(); k++){
             Boolean flag = false;
@@ -168,14 +177,15 @@ public class Attendance extends JPanel{
      *
      * @param attendance
      */
-    public void matchedRosterAttendance(ArrayList<ArrayList> attendance, ArrayList<ArrayList> roster) {
+    public void matchedRosterAttendance(ArrayList<ArrayList<String>> attendance, ArrayList<ArrayList<String>> roster) {
+        //attendance.add(new ArrayList<>(Arrays.asList("0", "0")));
         for (int i = 0; i < attendance.size(); i++) {
             String attendanceId = (String) attendance.get(i).get(0);
-            int attendanceDuration = (int) attendance.get(i).get(1);
+            int attendanceDuration = Integer.parseInt(String.valueOf(attendance.get(i).get(1)));
             for (int j = 0; j < roster.size(); j++) {
                 String rosterId = (String) roster.get(j).get(5);
                 if (attendanceId.equals(rosterId)){
-                    roster.get(i).add(attendanceDuration);
+                    roster.get(i).add(String.valueOf(attendanceDuration));
                 } 
             }
         }
